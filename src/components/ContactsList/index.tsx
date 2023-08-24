@@ -1,30 +1,23 @@
-import { faker } from '@faker-js/faker';
+import { Contact } from "../../types/Contact";
+import ContactCard from "../ContactCard";
+import { faker } from '@faker-js/faker'
+
 
 export default function ContactsList() {
   return (
-    <div className="overflow-x-scroll max-h-[720px]">
-      <table className="overflow-scroll mt-9 lg:mt-0">
-        <thead className='sticky top-0'>
-          <tr className="bg-blue-600 text-white text-left">
-            <th className="px-3 min-w-[200px] md:px-9 py-3">First Name</th>
-            <th className="px-3 min-w-[200px] md:px-9 py-3">Middle Name</th>
-            <th className="px-3 min-w-[200px] md:px-9 py-3">Last Name</th>
-            <th className="px-3 min-w-[200px] md:px-9 py-3">Mobile Number</th>
-            <th className="px-3 min-w-[200px] md:px-9 py-3">Email Address</th>
-          </tr>
-        </thead>
-        <tbody>
-          {[...new Array(90)].map((_) => (
-            <tr className='even:bg-blue-100'>
-              <td className="px-3 min-w-[200px] md:px-9 py-3">{faker.person.firstName()}</td>
-              <td className="px-3 min-w-[200px] md:px-9 py-3">{faker.person.middleName()}</td>
-              <td className="px-3 min-w-[200px] md:px-9 py-3">{faker.person.lastName()}</td>
-              <td className="px-3 min-w-[250px] md:px-9 py-3">{faker.phone.number('+63 ### ### ####')}</td>
-              <td className="px-3 min-w-[300px] md:px-9 py-3">{faker.internet.email()}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="flex flex-col gap-4 my-9 px-6 md:grid md:grid-cols-2 lg:px-12 xl:grid-cols-3">
+      {[...new Array(50)].map((_) => {
+        const contactDetails: Contact = {
+          avatarUrl: faker.image.avatar(),
+          firstName: faker.person.firstName(),
+          middleName: faker.person.middleName(),
+          lastName: faker.person.lastName(),
+          mobileNumber: faker.phone.number('+63 ### ### ####'),
+          email: faker.internet.email()
+        }
+
+        return <ContactCard {...contactDetails} />
+      })}
     </div>
   )
 }
