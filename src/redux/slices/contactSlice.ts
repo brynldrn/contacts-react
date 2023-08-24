@@ -27,11 +27,12 @@ export const contactSlice = createSlice({
   name: 'contacts',
   initialState,
   reducers: {
-    addContact: (state, action: PayloadAction<Omit<Contact, 'id'>>) => {
+    addContact: (state, action: PayloadAction<Omit<Contact, 'id'| 'avatarUrl'>>) => {
       state.contacts = [
         ...state.contacts,
         {
           id: state.contacts[state.contacts.length - 1].id++,
+          avatarUrl: faker.image.avatar(),
           ...action.payload
         }
       ]
