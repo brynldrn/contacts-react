@@ -1,13 +1,33 @@
 import { FormEvent, useCallback, useState } from "react"
 import { createPortal } from "react-dom"
+import { useAppDispatch } from "../../redux/hooks"
+import { addContact } from "../../redux/slices/contactSlice";
 
 export default function ContactModal() {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const dispatch = useAppDispatch();
 
   const handleSubmit = useCallback((e: FormEvent) => {
     e.preventDefault();
 
-  }, [])
+    const { firstName, middleName, lastName, mobileNumber, email } = e.target as typeof e.target & {
+      firstName: { value: string },
+      middleName: { value: string },
+      lastName: { value: string },
+      mobileNumber: { value: string },
+      email: { value: string }
+    }
+
+    dispatch(addContact({
+      firstName: firstName.value,
+      middleName: middleName.value,
+      lastName: lastName.value,
+      mobileNumber: mobileNumber.value,
+      email: email.value,
+    }))
+
+    setIsModalOpen(false)
+  }, [dispatch])
 
   return (
     <>

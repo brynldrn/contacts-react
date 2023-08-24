@@ -5,11 +5,13 @@ import ContactModal from "../ContactModal";
 export default function ContactsList() {
   const { contacts } = useAppSelector((state) => state.contacts)
 
+  console.log('contacts :>> ', contacts);
+
   return (
     <div className="my-9 px-6 lg:px-12 xl:px-36 2xl:px-80">
       <ContactModal />
       <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
-        {contacts.map((contactDetails) => <ContactCard {...contactDetails} />)}
+        {contacts.map((contactDetails) => <ContactCard key={contactDetails.id} {...contactDetails} />)}
       </div>
     </div>
   )
