@@ -1,10 +1,14 @@
+import { Provider } from "react-redux";
 import ContactsList from "./components/ContactsList";
+import store from "./redux/store";
 
 function App() {
   return (
-    <main className="w-full">
-      <ContactsList />
-    </main>
+    <Provider store={store}>
+      <main className="w-full">
+        <ContactsList />
+      </main>
+    </Provider>
   );
 }
 
