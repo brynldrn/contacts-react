@@ -6,6 +6,8 @@ import { faker } from '@faker-js/faker'
 // Define a type for the slice state
 type ContactState = {
   contacts: Contact[],
+  activeContact: Contact | null,
+  operationMode: 'edit' | 'delete' | null
 }
 
 // Define the initial state using that type
@@ -21,6 +23,8 @@ const initialState: ContactState = {
       email: faker.internet.email()
     }
   )),
+  activeContact: null,
+  operationMode: null
 }
 
 export const contactSlice = createSlice({
@@ -37,9 +41,15 @@ export const contactSlice = createSlice({
         }
       ]
     },
+    setActiveContact: (state, action: PayloadAction<Contact>) => {
+      state.activeContact = action.payload
+    },
+    setOperationMode: (state, action: PayloadAction<'edit' | 'delete' | null>) => {
+      state.operationMode = action.payload
+    }
   },
 })
 
-export const { addContact } = contactSlice.actions
+export const { addContact, setActiveContact, setOperationMode } = contactSlice.actions
 
 export default contactSlice.reducer

@@ -1,11 +1,12 @@
-import { FormEvent, useCallback, useState } from "react"
+import { FormEvent, useCallback, useEffect, useState } from "react"
 import { createPortal } from "react-dom"
-import { useAppDispatch } from "../../redux/hooks"
-import { addContact } from "../../redux/slices/contactSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks"
+import { addContact, setOperationMode } from "../../redux/slices/contactSlice";
 
 export default function ContactModal() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const dispatch = useAppDispatch();
+  const operationMode = useAppSelector((state) => state.contacts.operationMode)
 
   const handleSubmit = useCallback((e: FormEvent) => {
     e.preventDefault();
@@ -26,8 +27,20 @@ export default function ContactModal() {
       email: email.value,
     }))
 
+    dispatch(setOperationMode(null))
     setIsModalOpen(false)
   }, [dispatch])
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false)
+    dispatch(setOperationMode(null))
+  }, [dispatch])
+
+  useEffect(() => {
+    if (operationMode === 'edit') {
+      setIsModalOpen(true)
+    }
+  }, [operationMode])
 
   return (
     <>
@@ -35,7 +48,7 @@ export default function ContactModal() {
       {isModalOpen && createPortal((
         <div id="modal" className="fixed flex justify-center items-center top-0 left-0 w-[100dvw] h-[100dvh]">
           {/* overlay */}
-          <div className="bg-zinc-600/50 w-full h-full absolute top-0 left-0 -z-10" onClick={() => setIsModalOpen(false)} />
+          <div className="bg-zinc-600/50 w-full h-full absolute top-0 left-0 -z-10" onClick={handleCloseModal} />
 
           {/* content */}
           <div className="bg-white rounded-md shadow-lg px-4 py-7 w-5/6 md:w-[420px]">
