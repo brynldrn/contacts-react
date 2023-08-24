@@ -31,11 +31,11 @@ export const contactSlice = createSlice({
       state.contacts = [
         ...state.contacts,
         {
-          id: state.contacts[[...state.contacts].length - 1].id++,
+          id: state.contacts.length,
           avatarUrl: faker.image.avatar(),
           ...action.payload
         }
-      ].sort((a, b) => a.id - b.id)
+      ]
     },
   },
 })
