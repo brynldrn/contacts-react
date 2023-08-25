@@ -146,7 +146,7 @@ export default function ContactModal() {
               />
 
               {/* submit and clear */}
-              <div className="flex justify-around mt-4">
+              <div className="flex justify-end mt-4">
                 <button type="button" onClick={handleCloseModal} className="rounded-md px-5 py-3">Cancel</button>
                 <button type="submit" className="rounded-md bg-emerald-500 text-white px-5 py-3">Submit</button>
               </div>
