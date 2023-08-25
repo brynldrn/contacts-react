@@ -46,7 +46,7 @@ export default function ContactCard(props: Contact) {
           <a href={`mailto:${email}`} target='_blank' rel="noreferrer" className='hover:underline'>{email}</a>
         </div>
 
-        <div className='absolute -bottom-[20px] right-[20px] z-10 flex gap-3 md:gap-1 items-center ease-in-out duration-200 transition-all opacity-0 group-hover:opacity-100'>
+        <div className='absolute -bottom-[20px] right-[20px] z-10 flex gap-3 md:gap-1 items-center ease-in-out duration-200 transition-all opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto'>
           <button
             className='w-10 h-10 rounded-full shadow-md text-center flex items-center justify-center bg-emerald-500 text-white'
             onClick={handleEdit}
