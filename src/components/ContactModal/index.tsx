@@ -1,46 +1,78 @@
-import { FormEvent, useCallback, useEffect, useState } from "react"
+import { ChangeEvent, FormEvent, useCallback, useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
-import { addContact, setOperationMode } from "../../redux/slices/contactSlice";
+import { addContact, editContact, setActiveContact, setOperationMode } from "../../redux/slices/contactSlice";
+import { Contact } from "../../types/Contact";
 
 export default function ContactModal() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const dispatch = useAppDispatch();
-  const operationMode = useAppSelector((state) => state.contacts.operationMode)
-
-  const handleSubmit = useCallback((e: FormEvent) => {
-    e.preventDefault();
-
-    const { firstName, middleName, lastName, mobileNumber, email } = e.target as typeof e.target & {
-      firstName: { value: string },
-      middleName: { value: string },
-      lastName: { value: string },
-      mobileNumber: { value: string },
-      email: { value: string }
-    }
-
-    dispatch(addContact({
-      firstName: firstName.value,
-      middleName: middleName.value,
-      lastName: lastName.value,
-      mobileNumber: mobileNumber.value,
-      email: email.value,
-    }))
-
-    dispatch(setOperationMode(null))
-    setIsModalOpen(false)
-  }, [dispatch])
+  const { operationMode, activeContact } = useAppSelector((state) => state.contacts)
+  const [contactData, setContactData] = useState<Contact>({
+    avatarUrl: '',
+    id: 0,
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    mobileNumber: '',
+    email: ''
+  })
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false)
     dispatch(setOperationMode(null))
+    dispatch(setActiveContact(null))
+    setContactData({
+      avatarUrl: '',
+      id: 0,
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      mobileNumber: '',
+      email: ''
+    })
   }, [dispatch])
+
+  const handleSubmit = useCallback((e: FormEvent) => {
+    e.preventDefault();
+
+    if (!contactData) { return }
+
+    if (operationMode === 'edit') {
+      dispatch(editContact(contactData))
+    } else {
+      dispatch(addContact(contactData))
+    }
+
+    handleCloseModal()
+  }, [contactData, dispatch, handleCloseModal, operationMode])
+
+  const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+
+    setContactData((old) => ({
+      ...old,
+      [name]: value ?? '',
+    }))
+  }, [])
 
   useEffect(() => {
     if (operationMode === 'edit') {
       setIsModalOpen(true)
     }
   }, [operationMode])
+
+  useEffect(() => {
+    setContactData(activeContact ?? {
+      avatarUrl: '',
+      id: 0,
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      mobileNumber: '',
+      email: ''
+    })
+  }, [activeContact])
 
   return (
     <>
@@ -52,17 +84,70 @@ export default function ContactModal() {
 
           {/* content */}
           <div className="bg-white rounded-md shadow-lg px-4 py-7 w-5/6 md:w-[420px]">
-            <h3 className="font-bold text-2xl">Create new contact</h3>
+            <h3 className="font-bold text-2xl">{operationMode === 'edit' ? 'Edit' : 'Create new'} contact</h3>
             <form onSubmit={handleSubmit} className="mt-5 flex flex-col gap-3">
-              <input type="text" name="firstName" id="firstName" placeholder="First Name" className="border w-full rounded-md px-2 py-1 outline-none" required />
-              <input type="text" name="middleName" id="middleName" placeholder="Middle Name" className="border w-full rounded-md px-2 py-1 outline-none" />
-              <input type="text" name="lastName" id="lastName" placeholder="Last Name" className="border w-full rounded-md px-2 py-1 outline-none" required />
-              <input type="tel" name="mobileNumber" id="mobileNumber" placeholder="Mobile Number" className="border w-full rounded-md px-2 py-1 outline-none" required />
-              <input type="email" name="email" id="email" placeholder="Email Address" className="border w-full rounded-md px-2 py-1 outline-none" required />
+              {/* First Name */}
+              <input
+                type="text"
+                name="firstName"
+                id="firstName"
+                placeholder="First Name"
+                className="border w-full rounded-md px-2 py-1 outline-none"
+                required
+                value={contactData?.firstName}
+                onChange={handleInputChange}
+              />
+
+              {/* Middle Name */}
+              <input
+                type="text"
+                name="middleName"
+                id="middleName"
+                placeholder="Middle Name"
+                className="border w-full rounded-md px-2 py-1 outline-none"
+                value={contactData?.middleName}
+                onChange={handleInputChange}
+              />
+
+              {/* Last Name */}
+              <input
+                type="text"
+                name="lastName"
+                id="lastName"
+                placeholder="Last Name"
+                className="border w-full rounded-md px-2 py-1 outline-none"
+                required
+                value={contactData?.lastName}
+                onChange={handleInputChange}
+              />
+
+              {/* Mobile Number */}
+              <input
+                type="tel"
+                name="mobileNumber"
+                id="mobileNumber"
+                placeholder="Mobile Number"
+                className="border w-full rounded-md px-2 py-1 outline-none"
+                required
+                value={contactData?.mobileNumber}
+                onChange={handleInputChange}
+              />
+
+              {/* Email */}
+              <input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Email Address"
+                className="border w-full rounded-md px-2 py-1 outline-none"
+                required
+                value={contactData?.email}
+                onChange={handleInputChange}
+              />
 
               {/* submit and clear */}
               <div className="flex justify-around mt-4">
-                <button type="reset" className="rounded-md px-5 py-3">Clear</button>
+                <button type="button" onClick={handleCloseModal} className="rounded-md px-5 py-3">Cancel</button>
                 <button type="submit" className="rounded-md bg-emerald-500 text-white px-5 py-3">Submit</button>
               </div>
             </form>

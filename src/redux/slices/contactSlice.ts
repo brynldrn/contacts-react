@@ -35,13 +35,18 @@ export const contactSlice = createSlice({
       state.contacts = [
         ...state.contacts,
         {
+          ...action.payload,
           id: state.contacts.length,
           avatarUrl: faker.image.avatar(),
-          ...action.payload
         }
       ]
     },
-    setActiveContact: (state, action: PayloadAction<Contact>) => {
+    editContact: (state, action: PayloadAction<Contact>) => {
+      state.contacts = state.contacts.map((contact) => contact.id === action.payload.id ? {
+        ...action.payload
+      } : contact)
+    },
+    setActiveContact: (state, action: PayloadAction<Contact | null>) => {
       state.activeContact = action.payload
     },
     setOperationMode: (state, action: PayloadAction<'edit' | 'delete' | null>) => {
@@ -50,6 +55,11 @@ export const contactSlice = createSlice({
   },
 })
 
-export const { addContact, setActiveContact, setOperationMode } = contactSlice.actions
+export const {
+  addContact,
+  setActiveContact,
+  setOperationMode,
+  editContact
+} = contactSlice.actions
 
 export default contactSlice.reducer
